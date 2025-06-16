@@ -1,0 +1,1 @@
+# garmin-livetrack-static-url
