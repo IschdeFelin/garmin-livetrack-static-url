@@ -12,8 +12,8 @@ def check_for_livetrack_url(imap_server, email_user, email_password, session_fil
         mail.select("INBOX")
 
         # Search for all emails in the selected mailbox
-        result, data = mail.search(None, 'ALL')
-        # result, data = mail.search(None, 'UNSEEN')
+        result, data = mail.search(None, '(ALL FROM "noreply@garmin.com")')
+        # result, data = mail.search(None, '(UNSEEN FROM "noreply@garmin.com")')
 
         if result != 'OK':
             return None
