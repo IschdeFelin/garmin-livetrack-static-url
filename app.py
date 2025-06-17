@@ -1,4 +1,4 @@
-from flask import Flask, redirect, request, abort
+from flask import Flask, redirect, request, abort, render_template
 from mail_checker import check_for_livetrack_url
 from dotenv import load_dotenv
 import os
@@ -10,6 +10,7 @@ EMAIL_USER = os.getenv('EMAIL_USER')
 EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
 SESSION_FILE = os.getenv('SESSION_FILE', 'current_session.txt')
 CHECK_TOKEN = os.getenv('CHECK_TOKEN')
+SHOW_IFRAME = os.getenv('SHOW_IFRAME', 'true').lower() == 'true'
 
 app = Flask(__name__)
 
@@ -32,12 +33,16 @@ def index():
         with open(SESSION_FILE) as f:
             url = f.read().strip()
     except FileNotFoundError:
-        return "<h1>Keine aktive Garmin LiveTrack Session vorhanden.</h1>"
+        url = None
+    
+    iframe = 'iframe' in request.args
     
     if url:
-        return redirect(url)
+        if SHOW_IFRAME or iframe:
+            return render_template('active_session.html', url=url), 200
+        return redirect(url, code=302)
     else:
-        return "<h1>Keine aktive Garmin LiveTrack Session vorhanden.</h1>"
+        return render_template('no_active_session.html'), 200
     
 if __name__ == '__main__':
     app.run()

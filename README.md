@@ -32,11 +32,12 @@ pip install -r requirements.txt
 
 4. .env-Datei anlegen und konfigurieren:
 ```env
-IMAP_SERVER=dein-imap-server
-EMAIL_USER=deine-email@example.com
-EMAIL_PASSWORD=dein-email-passwort
-SESSION_FILE=current_session.txt
-CHECK_TOKEN=dein-geheimer-token
+IMAP_SERVER = dein-imap-server
+EMAIL_USER = deine-email@example.com
+EMAIL_PASSWORD = dein-email-passwort
+SESSION_FILE = current_session.txt
+CHECK_TOKEN = dein-geheimer-token
+SHOW_IFRAME = True
 ```
 
 ## Nutzung
