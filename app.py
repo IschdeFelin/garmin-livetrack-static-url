@@ -1,7 +1,8 @@
 from flask import Flask, redirect, request, abort, render_template
 from mail_checker import check_for_livetrack_url
 from dotenv import load_dotenv
-import os
+from datetime import datetime, timedelta
+import os, json
 
 
 load_dotenv()
@@ -11,6 +12,7 @@ EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
 SESSION_FILE = os.getenv('SESSION_FILE', 'current_session.txt')
 CHECK_TOKEN = os.getenv('CHECK_TOKEN')
 SHOW_IFRAME = os.getenv('SHOW_IFRAME', 'true').lower() == 'true'
+MAX_SESSION_AGE = int(os.getenv('MAX_SESSION_AGE', 24))  # Default to 24 hours
 
 app = Flask(__name__)
 
@@ -25,18 +27,27 @@ def check_mail():
     if url:
         return f"Updated: {url}", 200
     else:
-        return "No new Garmin LiveTrack URL found.", 204
+        return "No new Garmin LiveTrack URL found.", 200
     
 @app.route('/')
 def index():
     try:
-        with open(SESSION_FILE) as f:
-            url = f.read().strip()
-    except FileNotFoundError:
+        with open(SESSION_FILE, "r") as f:
+            data = json.load(f)
+            url = data.get('url')
+            timestamp_str = data.get('timestamp')
+            if not url or not timestamp_str:
+                raise ValueError("Invalid session data")
+            timestamp = datetime.fromisoformat(timestamp_str)
+    except (FileNotFoundError, ValueError, json.JSONDecodeError):
         url = None
     
     iframe = 'iframe' in request.args
     external = 'external' in request.args
+
+    # Check if the URL is still valid (not older than MAX_SESSION_AGE hours)
+    if url and (datetime.now() - timestamp) > timedelta(hours=MAX_SESSION_AGE):
+        url = None
     
     if url:
         if (SHOW_IFRAME or iframe) and not external:

@@ -39,6 +39,7 @@ EMAIL_PASSWORD = dein-email-passwort
 SESSION_FILE = current_session.txt
 CHECK_TOKEN = dein-geheimer-token
 SHOW_IFRAME = True
+MAX_SESSION_AGE = 24
 ```
 
 ## Nutzung

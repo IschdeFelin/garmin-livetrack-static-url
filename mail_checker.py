@@ -1,4 +1,5 @@
-import imaplib, email, re
+import imaplib, email, re, json
+from datetime import datetime
 
 
 def check_for_livetrack_url(imap_server, email_user, email_password, session_file):
@@ -46,8 +47,23 @@ def check_for_livetrack_url(imap_server, email_user, email_password, session_fil
                 match = re.search(r'https://livetrack\.garmin\.com/session/[^\s"<>]+', body)
                 if match:
                     url = match.group(0)
+
+                    # Check if the URL is already saved in the session file
+                    try:
+                        with open(session_file, "r") as f:
+                            existing_data = json.load(f)
+                            if existing_data.get('url') == url:
+                                return None  # URL already exists, no need to update
+                    except (FileNotFoundError, json.JSONDecodeError):
+                        pass
+
+                    # Save the new URL and timestamp to the session file
+                    data = {
+                        'url': url,
+                        'timestamp': datetime.now().isoformat(),
+                    }
                     with open(session_file, "w") as f:
-                        f.write(url)
+                        json.dump(data, f)
                     return url
         return None
     except imaplib.IMAP4.error:
