@@ -6,7 +6,8 @@ Dieses kleine Python/Flask-Projekt stellt eine statische URL bereit, die automat
 
 - Automatisches Abrufen der LiveTrack-URL aus dem E-Mail-Postfach
 - Speicherung der aktuellsten Session-URL in einer Datei
-- Webserver mit Weiterleitung zur aktuellen LiveTrack-Session
+- Webserver mit Weiterleitung oder Anzeige im iFrame
+- Steuerung über URL-Parameter möglich (?iframe, ?external)
 - Schutz der Mail-Abfrage durch Token
 - Konfiguration über eine `.env`-Datei
 
@@ -56,7 +57,14 @@ http://dein-server/check-mail?token=dein-geheimer-token
 http://dein-server/
 ```
 
+### Erweiterte Aufrufe
+- `http://dein-server/?iframe`
+  - Zeigt die aktuelle LiveTrack-Seite eingebettet als iFrame an.
+- `http://dein-server/?external`
+  - Erzwingt immer die Weiterleitung zur LiveTrack-URL, ohne iFrame.
+
+
 ## Hinweise
-- Die aktuellste LiveTrack-URL wird in der Datei `current_session.txt` gespeichert.
+- Die aktuellste LiveTrack-URL wird in der Datei gespeichert, die in der `.env` als `SESSION_FILE` definiert ist.
 
 - Die `/check-mail`-Route sollte durch einen sicheren Token geschützt werden, um unberechtigte Zugriffe zu vermeiden.

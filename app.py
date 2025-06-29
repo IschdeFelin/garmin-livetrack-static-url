@@ -36,9 +36,10 @@ def index():
         url = None
     
     iframe = 'iframe' in request.args
+    external = 'external' in request.args
     
     if url:
-        if SHOW_IFRAME or iframe:
+        if (SHOW_IFRAME or iframe) and not external:
             return render_template('active_session.html', url=url), 200
         return redirect(url, code=302)
     else:
